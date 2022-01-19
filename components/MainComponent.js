@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Home from './HomeComponent';
 import Directory from './DirectoryComponent'; // importing, aka, this is a child to the Main component
 import CampsiteInfo from './CampsiteInfoComponent';
 import Constants from 'expo-constants';
@@ -6,6 +7,7 @@ import { View, Platform } from 'react-native'; // Platform for conditional code 
 // the Main component is a central hub and will hold all of our navigators.
 import { createStackNavigator } from 'react-navigation-stack'; // one required argument, RouteConfigs object
 import { createAppContainer } from 'react-navigation';
+import { createDrawerNavigator } from 'react-navigation-drawer';
 import ExpoStatusBar from 'expo-status-bar/build/ExpoStatusBar';
 
 // set which components will be available to the stack
@@ -29,10 +31,45 @@ const DirectoryNavigator = createStackNavigator(
     }
 );
 
+// stack navigator for the Home component
+
+const HomeNavigator = createStackNavigator(
+    {
+        Home: { screen: Home }
+    },
+    // note: this second argument is optional
+    {
+        // initialRoute is not needed since we only have one screen to deal with
+        defaultNavigationOptions: {
+            headerStyle: {
+                backgroundColor: '#5637DD'
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+                color: '#fff'
+            }
+        }
+    }
+);
+
+// drawer navigator, this needs for it's first argument an object that contains the screens that will be in the drawer. pass the Navigator versions of the components so we get the stack navigator versions.
+
+const MainNavigator = createDrawerNavigator(
+    {
+        Home: { screen: HomeNavigator },
+        Directory: { screen: DirectoryNavigator }
+    },
+    // as always, this second argument is optional but the first is required
+    {
+        drawerBackgroundColor: '#cec8ff'
+    }
+);
+
 // now we need to pass all of the above to createAppContainer
 // createAppContainer will return a React component, in this case DirectoryNavigator
+// note: switching this to MainNavigator now that we're using drawers
 
-const AppNavigator = createAppContainer(DirectoryNavigator);
+const AppNavigator = createAppContainer(MainNavigator);
 
 // moving campsites data to the Directory component since we're adding actual naviagtion, leaving it commented out for personal reference
 
