@@ -25,7 +25,7 @@ class Directory extends Component {
     // we need to add a prop to the ListItem component. ListItem contains a built-in onPress prop.
     // update: since this is now a class component, we need to surround everything in a render method.
     render() {
-        const { navigate } = this.props.navigation;
+        const { navigate } = this.props.navigation; // each screen component is provided with the navigation prop automatically
         const renderDirectoryItem = ({item}) => {
             return (
                 <ListItem
