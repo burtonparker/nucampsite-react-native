@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Home from './HomeComponent';
 import Directory from './DirectoryComponent'; // importing, aka, this is a child to the Main component
 import CampsiteInfo from './CampsiteInfoComponent';
+import About from './AboutComponent';
+import Contact from './ContactComponent';
 import Constants from 'expo-constants';
 import { View, Platform } from 'react-native'; // Platform for conditional code adjustments
 // the Main component is a central hub and will hold all of our navigators.
@@ -52,12 +54,56 @@ const HomeNavigator = createStackNavigator(
     }
 );
 
+// stack navigator for the About component
+
+const AboutNavigator = createStackNavigator(
+    {
+        About: { screen: About }
+    },
+    // note: this second argument is optional
+    {
+        // initialRoute is not needed since we only have one screen to deal with
+        defaultNavigationOptions: {
+            headerStyle: {
+                backgroundColor: '#5637DD'
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+                color: '#fff'
+            }
+        }
+    }
+);
+
+// stack navigator for the Contact component
+
+const ContactNavigator = createStackNavigator(
+    {
+        Contact: { screen: Contact }
+    },
+    // note: this second argument is optional
+    {
+        // initialRoute is not needed since we only have one screen to deal with
+        defaultNavigationOptions: {
+            headerStyle: {
+                backgroundColor: '#5637DD'
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+                color: '#fff'
+            }
+        }
+    }
+);
+
 // drawer navigator, this needs for it's first argument an object that contains the screens that will be in the drawer. pass the Navigator versions of the components so we get the stack navigator versions.
 
 const MainNavigator = createDrawerNavigator(
     {
         Home: { screen: HomeNavigator },
-        Directory: { screen: DirectoryNavigator }
+        Directory: { screen: DirectoryNavigator },
+        About: { screen: AboutNavigator },
+        Contact: { screen: ContactNavigator }
     },
     // as always, this second argument is optional but the first is required
     {
