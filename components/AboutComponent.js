@@ -1,11 +1,22 @@
 import React, { Component } from 'react';
+// FIX 1: It's best practice to combine imports from the same library so your code is easier for other devs to follow 
+// OLD CODE:
+/*
 import { View, Text, ScrollView } from 'react-native';
 import { FlatList } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import { Card } from 'react-native-elements';
+*/
+import { ScrollView, Text, FlatList } from 'react-native';
+import { Card, ListItem } from 'react-native-elements';
+// END FIX 1
+
+// NOTE: We do not need any of the navigator imports in this component file.
+/*
 import { createStackNavigator } from 'react-navigation-stack'; // one required argument, RouteConfigs object
 import { createAppContainer } from 'react-navigation';
 import { createDrawerNavigator } from 'react-navigation-drawer';
+*/
 import { PARTNERS } from '../shared/partners';
 
 function Mission() { // gonna pass this an item we destructure from the props object
