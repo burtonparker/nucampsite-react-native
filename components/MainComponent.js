@@ -130,10 +130,60 @@ const ContactNavigator = createStackNavigator(
 
 const MainNavigator = createDrawerNavigator(
     {
-        Home: { screen: HomeNavigator },
-        Directory: { screen: DirectoryNavigator },
-        About: { screen: AboutNavigator },
-        Contact: { screen: ContactNavigator }
+        Home: { 
+            screen: HomeNavigator,
+            navigationOptions: { // set these up as objects
+                drawerIcon: ({tintColor}) => (
+                    <Icon
+                        name='home'
+                        type='font-awesome'
+                        size={24}
+                        color={tintColor} // colors here will change based on active/inactive, and yes we can change the colors if we look up the documentation
+                    />
+                ) // drawerIcon prop, needs a function, tintColor is a default
+            }
+        },
+        Directory: { 
+            screen: DirectoryNavigator,
+            navigationOptions: { 
+                drawerIcon: ({tintColor}) => (
+                    <Icon
+                        name='list'
+                        type='font-awesome'
+                        size={24}
+                        color={tintColor} 
+                    />
+                ) 
+            }
+        },
+        About: { 
+            screen: AboutNavigator,
+            navigationOptions: { 
+                drawerLabel: 'About Us', // override "About" label
+                drawerIcon: ({tintColor}) => (
+                    <Icon
+                        name='info-circle'
+                        type='font-awesome'
+                        size={24}
+                        color={tintColor} 
+                    />
+                ) 
+            }
+        },
+        Contact: { 
+            screen: ContactNavigator,
+            navigationOptions: { 
+                drawerLabel: 'Contact Us', // override "Contact" label
+                drawerIcon: ({tintColor}) => (
+                    <Icon
+                        name='address-card'
+                        type='font-awesome'
+                        size={24}
+                        color={tintColor} 
+                    />
+                ) 
+            }
+        }
     },
     // as always, this second argument is optional but the first is required
     {
