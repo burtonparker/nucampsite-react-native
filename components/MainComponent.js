@@ -5,23 +5,35 @@ import CampsiteInfo from './CampsiteInfoComponent';
 import About from './AboutComponent';
 import Contact from './ContactComponent';
 import Constants from 'expo-constants';
-import { View, Platform } from 'react-native'; // Platform for conditional code adjustments
+import { View, Platform, StyleSheet } from 'react-native'; // Platform for conditional code adjustments
 // the Main component is a central hub and will hold all of our navigators.
 import { createStackNavigator } from 'react-navigation-stack'; // one required argument, RouteConfigs object
 import { createAppContainer } from 'react-navigation';
 import { createDrawerNavigator } from 'react-navigation-drawer';
+import { Icon } from 'react-native-elements';
 import ExpoStatusBar from 'expo-status-bar/build/ExpoStatusBar';
+import { StatusBar } from 'expo-status-bar';
 
 // set which components will be available to the stack
 const DirectoryNavigator = createStackNavigator(
     {
-        Directory: { screen: Directory },
+        Directory: { 
+            screen: Directory,
+            navigationOptions:  ({navigation}) => ({ // wrap this OBJECT in a set of parentheses so that the arrow function doesn't get confused. otherwise it might think that's the beginning curly brace for a FUNCTION BODY, but it's actually the beginning curly brace for an OBJECT LITERAL.
+                headerLeft: <Icon
+                    name='list'
+                    type='font-awesome'
+                    iconStyle={styles.stackIcon}
+                    onPress={() => navigation.toggleDrawer()}
+                /> // gonna destructure the navigation prop in the parameter list so we can use it's built in toggleDrawer method. also note that we can make separate edits to CampsiteInfo screen.
+            })
+        },
         CampsiteInfo: { screen: CampsiteInfo }
     },
     // note: this second argument is optional
     {
         initialRouteName: 'Directory', // default to showing the Directory component
-        defaultNavigationOptions: {
+        defaultNavigationOptions: { // note: these styles apply to BOTH screens above, so we're going to want to add additional navigationOptions to JUST the Directory.
             headerStyle: {
                 backgroundColor: '#5637DD'
             },
@@ -42,15 +54,21 @@ const HomeNavigator = createStackNavigator(
     // note: this second argument is optional
     {
         // initialRoute is not needed since we only have one screen to deal with
-        defaultNavigationOptions: {
+        defaultNavigationOptions: ({navigation}) => ({ // since we only have one screen here we can just use defaultNavigationOptions and not have to do the other navigationOptions fiddling we did with Directory above. that being said, we DO have do destructure navigation into here though.
             headerStyle: {
                 backgroundColor: '#5637DD'
             },
             headerTintColor: '#fff',
             headerTitleStyle: {
                 color: '#fff'
-            }
-        }
+            },
+            headerLeft: <Icon
+                name='home'
+                type='font-awesome'
+                iconStyle={styles.stackIcon}
+                onPress={() => navigation.toggleDrawer()}
+            />
+        })
     }
 );
 
@@ -63,15 +81,21 @@ const AboutNavigator = createStackNavigator(
     // note: this second argument is optional
     {
         // initialRoute is not needed since we only have one screen to deal with
-        defaultNavigationOptions: {
+        defaultNavigationOptions: ({navigation}) => ({ // since we only have one screen here we can just use defaultNavigationOptions and not have to do the other navigationOptions fiddling we did with Directory above. that being said, we DO have do destructure navigation into here though.
             headerStyle: {
                 backgroundColor: '#5637DD'
             },
             headerTintColor: '#fff',
             headerTitleStyle: {
                 color: '#fff'
-            }
-        }
+            },
+            headerLeft: <Icon
+                name='info-circle'
+                type='font-awesome'
+                iconStyle={styles.stackIcon}
+                onPress={() => navigation.toggleDrawer()}
+            />
+        })
     }
 );
 
@@ -84,15 +108,21 @@ const ContactNavigator = createStackNavigator(
     // note: this second argument is optional
     {
         // initialRoute is not needed since we only have one screen to deal with
-        defaultNavigationOptions: {
+        defaultNavigationOptions: ({navigation}) => ({ // since we only have one screen here we can just use defaultNavigationOptions and not have to do the other navigationOptions fiddling we did with Directory above. that being said, we DO have do destructure navigation into here though.
             headerStyle: {
                 backgroundColor: '#5637DD'
             },
             headerTintColor: '#fff',
             headerTitleStyle: {
                 color: '#fff'
-            }
-        }
+            },
+            headerLeft: <Icon
+                name='address-card'
+                type='font-awesome'
+                iconStyle={styles.stackIcon}
+                onPress={() => navigation.toggleDrawer()}
+            />
+        })
     }
 );
 
@@ -152,6 +182,12 @@ class Main extends Component {
 
 // end goal is to render the CampsiteInfo component below the directory whenever one of the directory items is clicked.
 
-
+const styles = StyleSheet.create({
+    stackIcon: {
+        marginLeft: 10,
+        color: '#fff',
+        fontSize: 24
+    }
+});
 
 export default Main;
