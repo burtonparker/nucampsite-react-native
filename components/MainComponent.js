@@ -155,7 +155,7 @@ const MainNavigator = createDrawerNavigator(
     {
         Home: { 
             screen: HomeNavigator,
-            navigationOptions: { // set these up as objects
+            navigationOptions: { // set these up as objects please
                 drawerIcon: ({tintColor}) => (
                     <Icon
                         name='home'
