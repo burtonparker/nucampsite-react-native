@@ -3,13 +3,20 @@ import { View, Text, ScrollView, FlatList } from 'react-native';
 import { Card, Icon } from 'react-native-elements';
 import { connect } from 'react-redux'; // how we get the data from the redux store
 import { baseUrl } from '../shared/baseUrl';
+import { postFavorite } from '../redux/ActionCreators'; // to store data first we need to import our action creator
 
 // you have to pass mapStateToProps to connect in order for this to work
 const mapStateToProps = state => { // mapStateToProps lets us pick and choose certain parts of the store so we don't have to load ALL of it
     return {
         campsites: state.campsites,
-        comments: state.comments
+        comments: state.comments,
+        favorites: state.favorites // to store data we need to request for the redux store to pass the favorites state in as props
     };
+};
+
+// to store data we must pass in the postFavorite action creator with campsiteId as an action creator
+const mapDispatchToProps = {
+    postFavorite: campsiteId => (postFavorite(campsiteId))
 };
 
 function RenderCampsite(props) { // UPDATE: for Week 2, Lesson 1 - we are now passing more than just campsite data so we need the entire props object in here. specifically this is being done because of our favorite/markFavorite user input. Previous notes from Week 1 lessons... from props we are only going to use the properties of the campsite object, so we can destructure that in the parameter list.
@@ -72,15 +79,19 @@ function RenderComments({comments}) { //desctructure the comments array,  it get
 // convert this from functional into a class component
 class CampsiteInfo extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            favorite: false // note: for this lesson we're going to store the user selection in the CampsiteInfo components (local) state. long term this isn't a good solution since the data will get wiped anytime the CampsiteInfo component is re-rendered, for example if we hit the back button in the app, but for now this is a good stepping stone towards using the Redux store later. set it to false first, then set up an event handler to switch it to true.
-        };
-    }
+    // saving the below for educational purposes, see commit history for how this used to function, particularly the bit with favorite.
 
-    markFavorite() {
-        this.setState({favorite: true}); // toggles favorite property to true. now we need to pass both the favorite property and the markFavorite event handler to the RenderCampsite method/component
+    // constructor(props) {
+    //     super(props);
+    //     this.state = {
+    //         favorite: false // note: for this lesson we're going to store the user selection in the CampsiteInfo components (local) state. long term this isn't a good solution since the data will get wiped anytime the CampsiteInfo component is re-rendered, for example if we hit the back button in the app, but for now this is a good stepping stone towards using the Redux store later. set it to false first, then set up an event handler to switch it to true.
+    //     };
+    // }
+
+    markFavorite(campsiteId) {
+        this.props.postFavorite(campsiteId); 
+        
+        // note: old code used to toggle favorite property to true. now we need to pass both the favorite property and the markFavorite event handler to the RenderCampsite method/component
     }
 
     static navigationOptions = {
@@ -94,8 +105,8 @@ class CampsiteInfo extends Component {
         return (
             <ScrollView>
             <RenderCampsite campsite={campsite} 
-                favorite={this.state.favorite}
-                markFavorite={() => this.markFavorite()} // note: we could also have written onPress={() => this.markFavorite()}
+                favorite={this.props.favorites.includes(campsiteId)} // includes will return a true or false, checks if this particular campsite being rendered exists in the favorites array. this.props.favorites lets us access the array. then we pass that boolean value onto the RenderCampsite component. 
+                markFavorite={() => this.markFavorite(campsiteId)} // note: we could also have written onPress={() => this.markFavorite()}
             />
             <RenderComments comments={comments} />
             </ScrollView>
@@ -103,4 +114,4 @@ class CampsiteInfo extends Component {
     }
 }
 
-export default connect(mapStateToProps)(CampsiteInfo);
+export default connect(mapStateToProps, mapDispatchToProps)(CampsiteInfo);
