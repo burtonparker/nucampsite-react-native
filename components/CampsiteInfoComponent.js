@@ -1,8 +1,16 @@
 import React, { Component } from 'react'; // reminder, we need component when we need to deal with state data
 import { View, Text, ScrollView, FlatList } from 'react-native';
 import { Card, Icon } from 'react-native-elements';
-import { CAMPSITES } from '../shared/campsites';
-import { COMMENTS } from '../shared/comments';
+import { connect } from 'react-redux'; // how we get the data from the redux store
+import { baseUrl } from '../shared/baseUrl';
+
+// you have to pass mapStateToProps to connect in order for this to work
+const mapStateToProps = state => { // mapStateToProps lets us pick and choose certain parts of the store so we don't have to load ALL of it
+    return {
+        campsites: state.campsites,
+        comments: state.comments
+    };
+};
 
 function RenderCampsite(props) { // UPDATE: for Week 2, Lesson 1 - we are now passing more than just campsite data so we need the entire props object in here. specifically this is being done because of our favorite/markFavorite user input. Previous notes from Week 1 lessons... from props we are only going to use the properties of the campsite object, so we can destructure that in the parameter list.
 
@@ -12,7 +20,7 @@ function RenderCampsite(props) { // UPDATE: for Week 2, Lesson 1 - we are now pa
         return (
             <Card
                 featuredTitle={campsite.name}
-                image={require('./images/react-lake.jpg')}>
+                image={{uri: baseUrl + campsite.image}}>
                 <Text style={{margin:10}} /* double curly braces again, this is an object */>
                     {campsite.description}
                 </Text>
@@ -67,8 +75,6 @@ class CampsiteInfo extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            campsites: CAMPSITES, // somewhat obvious but this is how we bring data in from files to state
-            comments: COMMENTS,
             favorite: false // note: for this lesson we're going to store the user selection in the CampsiteInfo components (local) state. long term this isn't a good solution since the data will get wiped anytime the CampsiteInfo component is re-rendered, for example if we hit the back button in the app, but for now this is a good stepping stone towards using the Redux store later. set it to false first, then set up an event handler to switch it to true.
         };
     }
@@ -83,8 +89,8 @@ class CampsiteInfo extends Component {
 
     render() {
         const campsiteId = this.props.navigation.getParam('campsiteId'); // this was held by onPress in Directory and accessed via the navigation prop. it's passed automatically to all components that are set up as screens, as we did to this component and Directory in Main.
-        const campsite = this.state.campsites.filter(campsite => campsite.id === campsiteId)[0]; // from props we are going to pull out a campsite object and send it to RenderCampsite. note: we're no longer passing this via props.campsite, we just created an object called 'campsite' instead.
-        const comments = this.state.comments.filter(comment => comment.campsiteId === campsiteId); // here we are going to use the campsiteId number from comments.js to find the matching comments for each campsite using filter.
+        const campsite = this.props.campsites.campsites.filter(campsite => campsite.id === campsiteId)[0]; // from props we are going to pull out a campsite object and send it to RenderCampsite. note: we're no longer passing this via props.campsite, we just created an object called 'campsite' instead.
+        const comments = this.props.comments.comments.filter(comment => comment.campsiteId === campsiteId); // here we are going to use the campsiteId number from comments.js to find the matching comments for each campsite using filter.
         return (
             <ScrollView>
             <RenderCampsite campsite={campsite} 
@@ -97,4 +103,4 @@ class CampsiteInfo extends Component {
     }
 }
 
-export default CampsiteInfo;
+export default connect(mapStateToProps)(CampsiteInfo);
