@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { FlatList } from 'react-native';
+import { View, FlatList } from 'react-native';
 import { Tile } from 'react-native-elements';
 import { connect } from 'react-redux'; // how we get the data from the redux store
 import { baseUrl } from '../shared/baseUrl';
+import Loading from './LoadingComponent';
 
 // you have to pass mapStateToProps to connect in order for this to work
 const mapStateToProps = state => { // mapStateToProps lets us pick and choose certain parts of the store so we don't have to load ALL of it
@@ -44,6 +45,16 @@ class Directory extends Component {
         };
 
         // returning the FlatList component from react-native
+        if (this.props.campsites.isLoading) {
+            return <Loading />;
+        }
+        if (this.props.campsites.errMess) {
+            return (
+                <View>
+                    <Text>{props.campsites.errMess}</Text>
+                </View>
+            );
+        }
         return (
             <FlatList // we need to pass some props to this component. note: now we are passing this.state since this component holds the state instead of Main.
                 data={this.props.campsites.campsites} // where is the data coming from? expecting an array - let's plug in the campsites array we passed from Main

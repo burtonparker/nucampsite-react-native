@@ -9,6 +9,7 @@ import { Card } from 'react-native-elements';
 */
 import { ScrollView, Text, FlatList } from 'react-native';
 import { Card, ListItem } from 'react-native-elements';
+import Loading from './LoadingComponent'; // reminder: you don't need { Braces } when what you're importing is the default export of the file.
 // END FIX 1
 
 // NOTE: We do not need any of the navigator imports in this component file.
@@ -58,6 +59,28 @@ class About extends Component {
             );
         }
 
+        if (this.props.partners.isLoading) {
+            return (
+                <ScrollView>
+                <Mission />
+                    <Card 
+                        title="Community Partners">
+                            <Loading />
+                    </Card>
+                </ScrollView>
+            );
+        }
+        if (this.props.partners.errMess) {
+            return (
+                <ScrollView>
+                <Mission />
+                    <Card 
+                        title="Community Partners">
+                            <Text>{this.props.partners.errMess}</Text>
+                    </Card>
+                </ScrollView> 
+            );
+        }
         return (
             <ScrollView>
                 <Mission />
