@@ -14,6 +14,17 @@ import { Icon } from 'react-native-elements';
 import ExpoStatusBar from 'expo-status-bar/build/ExpoStatusBar';
 import { StatusBar } from 'expo-status-bar';
 import SafeAreaView from 'react-native-safe-area-view';
+// we have to do some extra shit here to fetch data from the server
+import { connect } from 'react-redux';
+import { fetchCampsites, fetchComments, fetchPartners, fetchPromotions } from '../redux/ActionCreators';
+
+// using mapDispatchToProps allows us to access these action creators as props
+const mapDispatchToProps = { // these action creators have all been thunked so they can handle async calls
+    fetchCampsites,
+    fetchComments,
+    fetchPromotions,
+    fetchPartners
+};
 
 // set which components will be available to the stack
 const DirectoryNavigator = createStackNavigator(
@@ -224,6 +235,14 @@ const AppNavigator = createAppContainer(MainNavigator);
 // moving campsites data to the Directory component since we're adding actual naviagtion, leaving it commented out for personal reference
 
 class Main extends Component {
+
+    componentDidMount() { // we want to call our action creators AFTER the component has been created, so we'll use the componentDidMount life cycle method here to accomplish that.
+        this.props.fetchCampsites();
+        this.props.fetchComments();
+        this.props.fetchPromotions();
+        this.props.fetchPartners();
+
+    }
 /*     constructor(props) {
         super(props);
         this.state = {
@@ -285,4 +304,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Main;
+export default connect(null, mapDispatchToProps)(Main); // null first because we don't have state to props to be mapped.
