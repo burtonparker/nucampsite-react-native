@@ -17,7 +17,15 @@ import { createStackNavigator } from 'react-navigation-stack'; // one required a
 import { createAppContainer } from 'react-navigation';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 */
-import { PARTNERS } from '../shared/partners';
+import { connect } from 'react-redux'; // how we get the data from the redux store
+import { baseUrl } from '../shared/baseUrl';
+
+// you have to pass mapStateToProps to connect in order for this to work
+const mapStateToProps = state => { // mapStateToProps lets us pick and choose certain parts of the store so we don't have to load ALL of it
+    return {
+        partners: state.partners
+    };
+};
 
 function Mission() { // gonna pass this an item we destructure from the props object
 
@@ -32,12 +40,7 @@ function Mission() { // gonna pass this an item we destructure from the props ob
 
 class About extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            partners: PARTNERS
-        };
-    }
+// see commit history, we removed a constructor here, and so with it, local state creation.
 
     static navigationOptions = {
         title: 'About'
@@ -61,7 +64,7 @@ class About extends Component {
                 <Card 
                     title="Community Partners">
                         <FlatList 
-                            data={this.state.partners}
+                            data={this.props.partners.partners} // the first partners refers to the entire part of the state that handles the partners data, including isLoading and error message properties, along with the partners array. the second partners, is what actually refers to the partners data array.
                             renderItem={renderPartner}
                             keyExtractor={item => item.id.toString()}
                         />
@@ -71,4 +74,4 @@ class About extends Component {
     }
 }
 
-export default About;
+export default connect(mapStateToProps)(About);
