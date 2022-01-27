@@ -53,7 +53,7 @@ class About extends Component {
                 <ListItem
                     title={item.name}
                     subtitle={item.description}
-                    leftAvatar={{ source: require('./images/bootstrap-logo.png')}}
+                    leftAvatar={{ source: {uri: baseUrl + item.image}}}
                 />
             );
         }
@@ -74,4 +74,4 @@ class About extends Component {
     }
 }
 
-export default connect(mapStateToProps)(About);
+export default connect(mapStateToProps)(About); // here's how we actally connect all that good good data.
