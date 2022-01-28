@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, StyleSheet, Picker, Switch, Button } from 'react-native';
+import { Text, View, ScrollView, StyleSheet, Picker, Switch, Button, Modal } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 class Reservation extends Component {
@@ -10,7 +10,8 @@ class Reservation extends Component {
         this.state = {
             campers: 1,
             hikeIn: false,
-            date: new Date() // built in JavaScript function here
+            date: new Date(), // built in JavaScript function here
+            showModal: false // use this component's local state to determine whether the modal will be shown or not. modal shows when this is true, when false, not so much.
         };
     }
 
@@ -18,12 +19,22 @@ class Reservation extends Component {
         title: 'Reserve Campsite'
     }
 
+    toggleModal() {
+        this.setState({showModal: !this.state.showModal}); // checks the current state of the showModal property, and toggles it to it's opposite using setState and the logical not operator.
+    }
+
     handleReservation() {
         console.log(JSON.stringify(this.state)); // this logs the user input and resets the state back to the default from the constructor.
+        this.toggleModal(); // we're still logging to the console for debugging, but notice we're also opening the modal now too.
+    }
+        
+    resetForm() {
         this.setState({
             campers: 1,
             hikeIn: false,
-            date: new Date()
+            date: new Date(),
+            showCalendar: false,
+            showModal: false
         });
     }
 
@@ -84,6 +95,33 @@ class Reservation extends Component {
                         accessibilityLabel='Tap me to search for available campsites to reserve.'
                     />
                 </View>
+                <Modal
+                    animationType={'slide'} // slide, fade, or none
+                    transparent={false} // transparent or opaque
+                    visible={this.state.showModal} // follows showModal's state true/false
+                    onRequestClose={() => this.toggleModal()} // what happens when the user clicks the hardward back button on their mobile device 
+                >
+                    <View style={styles.modal}>
+                        <Text style={styles.modalTitle}>Search Campsite Reservations</Text>
+                        <Text style={styles.modalText}>
+                            Number of Campers: {this.state.campers}
+                        </Text>
+                        <Text style={styles.modalText}>
+                            Hike-In?: {this.state.hikeIn ? 'Yes' : 'No' /* ternary to display text based on true or false input */}
+                        </Text>
+                        <Text style={styles.modalText}>
+                            Date: {this.state.date.toLocaleDateString('en-US')}
+                        </Text>
+                        <Button 
+                            onPress={() => {
+                                this.toggleModal();
+                                this.resetForm();
+                            }}
+                            color='#5637dd'
+                            title='Close'
+                        />
+                    </View>
+                </Modal>
             </ScrollView>
         );
     }
@@ -103,6 +141,22 @@ const styles = StyleSheet.create({ // note: our variable doesn't have to be call
     },
     formItem: {
         flex: 1
+    },
+    modal: { 
+        justifyContent: 'center',
+        margin: 20
+    },
+    modalTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        backgroundColor: '#5637DD',
+        textAlign: 'center',
+        color: '#fff',
+        marginBottom: 20
+    },
+    modalText: {
+        fontSize: 18,
+        margin: 10
     }
 });
 
