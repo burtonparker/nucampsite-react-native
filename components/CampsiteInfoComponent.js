@@ -1,9 +1,9 @@
 import React, { Component } from 'react'; // reminder, we need component when we need to deal with state data
-import { View, Text, ScrollView, FlatList } from 'react-native';
-import { Card, Icon } from 'react-native-elements';
+import { View, Text, ScrollView, FlatList, Modal, Button, StyleSheet } from 'react-native';
+import { Card, Icon, Rating, Input } from 'react-native-elements';
 import { connect } from 'react-redux'; // how we get the data from the redux store
 import { baseUrl } from '../shared/baseUrl';
-import { postFavorite } from '../redux/ActionCreators'; // to store data first we need to import our action creator
+import { postFavorite, postComment } from '../redux/ActionCreators'; // to store data first we need to import our action creator
 
 // you have to pass mapStateToProps to connect in order for this to work
 const mapStateToProps = state => { // mapStateToProps lets us pick and choose certain parts of the store so we don't have to load ALL of it
@@ -16,7 +16,8 @@ const mapStateToProps = state => { // mapStateToProps lets us pick and choose ce
 
 // to store data we must pass in the postFavorite action creator with campsiteId as an action creator
 const mapDispatchToProps = {
-    postFavorite: campsiteId => (postFavorite(campsiteId))
+    postFavorite: campsiteId => (postFavorite(campsiteId)),
+    postComment: (campsiteId, rating, author, text) => (postComment(campsiteId, rating, author, text))
 };
 
 function RenderCampsite(props) { // UPDATE: for Week 2, Lesson 1 - we are now passing more than just campsite data so we need the entire props object in here. specifically this is being done because of our favorite/markFavorite user input. Previous notes from Week 1 lessons... from props we are only going to use the properties of the campsite object, so we can destructure that in the parameter list.
@@ -31,6 +32,7 @@ function RenderCampsite(props) { // UPDATE: for Week 2, Lesson 1 - we are now pa
                 <Text style={{margin:10}} /* double curly braces again, this is an object */>
                     {campsite.description}
                 </Text>
+                <View style={styles.cardRow}>
                 <Icon // what we can use here: https://react-native-elements.github.io/react-native-elements/docs/2.3.2/icon
                     name={props.favorite ? 'heart' : 'heart-o'} // ternary operator here, if favorite is true, display the solid heart icon, if it's false, display the open heart icon.
                     type='font-awesome'
@@ -47,6 +49,15 @@ function RenderCampsite(props) { // UPDATE: for Week 2, Lesson 1 - we are now pa
                     // just a dumb alert example for myself
                     // onPress={() => alert('blah blah blah')}
                 />
+                <Icon
+                    name='pencil'
+                    type='font-awesome'
+                    color='#5637dd'
+                    raised
+                    reverse
+                    onPress={() => props.onShowModal()}
+                />
+                </View>
             </Card>
         );
     }
@@ -59,7 +70,12 @@ function RenderComments({comments}) { //desctructure the comments array,  it get
         return (
             <View style={{margin: 10}}>
                 <Text style={{fontSize: 14}}>{item.text}</Text>
-                <Text style={{fontSize: 12}}>{item.rating} Stars</Text>
+                <Rating
+                    startingValue={item.rating}
+                    imageSize={10}
+                    style={{ alignItems: 'flex-start', paddingVertical: '5%'}}
+                    readonly='true'
+                />
                 <Text style={{fontSize: 12}}>{`-- ${item.author}, ${item.date}`}</Text>
             </View>
         );
@@ -78,6 +94,35 @@ function RenderComments({comments}) { //desctructure the comments array,  it get
 
 // convert this from functional into a class component
 class CampsiteInfo extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            showModal: false,
+            rating: 5,
+            author: '',
+            text: ''
+        };
+    }
+
+    toggleModal() {
+        this.setState({showModal: !this.state.showModal}); // checks the current state of the showModal property, and toggles it to it's opposite using setState and the logical not operator.
+    }
+
+    handleComment(campsiteId) {
+        //console.log(JSON.stringify(this.state)); // this logs the user input
+        postComment(campsiteId, this.state.rating, this.state.author, this.state.text)
+        this.toggleModal(); // we're still logging to the console for debugging, but notice we're also opening the modal now too.       
+    }
+
+    resetForm() {
+        this.setState({
+            showModal: false,
+            rating: 5,
+            author: '',
+            text: ''
+        });
+    }
 
     // saving the below for educational purposes, see commit history for how this used to function, particularly the bit with favorite.
 
@@ -107,11 +152,76 @@ class CampsiteInfo extends Component {
             <RenderCampsite campsite={campsite} 
                 favorite={this.props.favorites.includes(campsiteId)} // includes will return a true or false, checks if this particular campsite being rendered exists in the favorites array. this.props.favorites lets us access the array. then we pass that boolean value onto the RenderCampsite component. 
                 markFavorite={() => this.markFavorite(campsiteId)} // note: we could also have written onPress={() => this.markFavorite()}
+                onShowModal={() => this.toggleModal()}
             />
             <RenderComments comments={comments} />
+                <Modal
+                    animationType={'slide'} // slide, fade, or none
+                    transparent={false} // transparent or opaque
+                    visible={this.state.showModal} // follows showModal's state true/false
+                    onRequestClose={() => this.toggleModal()} // what happens when the user clicks the hardward back button on their mobile device 
+                >
+                    <View style={styles.modal}>
+                        <Rating
+                            showRating
+                            startingValue={this.state.rating}
+                            imageSize={40}
+                            onFinishRating={rating => this.setState({rating: rating})}
+                            style={{paddingVertical: 10}}
+                        />
+                        <Input
+                            placeholder='Author'
+                            leftIcon={{type: 'font-awesome', name: 'user-o'}}
+                            leftIconContainerStyle={{paddingRight: 10}}
+                            onChangeText={author => this.setState({author: author})}
+                            value
+                        />
+                        <Input
+                            placeholder='Comments'
+                            leftIcon={{type: 'font-awesome', name: 'comment-o'}}
+                            leftIconContainerStyle={{paddingRight: 10}}
+                            onChangeText={text => this.setState({text: text})}
+                            value
+                        />
+                        <View style={{margin: 10}}>
+                            <Button
+                                title='Submit'
+                                color='#5637dd'
+                                onPress={() => {
+                                    this.handleComment(campsiteId);
+                                    this.resetForm();
+                                }}
+                            />
+                        </View>
+                        <View style={{margin: 10}}>
+                            <Button 
+                                onPress={() => {
+                                    this.toggleModal();
+                                    this.resetForm();
+                                }}
+                                color='#808080'
+                                title='Cancel'
+                            />
+                        </View>
+                    </View>
+                </Modal>
             </ScrollView>
         );
     }
 }
+
+const styles = StyleSheet.create({ 
+    cardRow: {
+        alignItems: 'center', // vertical centering
+        justifyContent: 'center', // horizontal centering
+        flex: 1,
+        flexDirection: 'row',
+        margin: 20
+    },
+    modal: { 
+        justifyContent: 'center',
+        margin: 20
+    }
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(CampsiteInfo);

@@ -2,7 +2,7 @@ import * as ActionTypes from './ActionTypes';
 import { baseUrl } from '../shared/baseUrl';
 
 export const fetchComments = () => dispatch => {
-    return fetch(baseUrl + 'comments')
+    return fetch(baseUrl + 'comments') // we need thunk because of this specific use of fetch, because this is not a pure function, which redux hates, so we use a thunk and the double fat arrow trick above.
         .then(response => {
                 if (response.ok) {
                     return response;
@@ -14,10 +14,10 @@ export const fetchComments = () => dispatch => {
             },
             error => {
                 const errMess = new Error(error.message);
-                throw errMess;
+                throw errMess;  // throws to catch, funny
             })
-        .then(response => response.json())
-        .then(comments => dispatch(addComments(comments)))
+        .then(response => response.json()) // translates from json to javascript
+        .then(comments => dispatch(addComments(comments))) // this can be called whatever but we call it comments since it represents the comments array
         .catch(error => dispatch(commentsFailed(error.message)));
 };
 
@@ -26,8 +26,8 @@ export const commentsFailed = errMess => ({
     payload: errMess
 });
 
-export const addComments = comments => ({
-    type: ActionTypes.ADD_COMMENTS,
+export const addComments = comments => ({ // this could also be called whatever
+    type: ActionTypes.ADD_COMMENTS, // sending objects to our reducers
     payload: comments
 });
 
@@ -154,4 +154,24 @@ export const postFavorite = campsiteId => dispatch => { // here we're passing th
 export const addFavorite = campsiteId => ({ // non-thunked, simply returning an action object
     type: ActionTypes.ADD_FAVORITE,
     payload: campsiteId
+})
+
+export const postComment = (campsiteId, rating, author, text) => dispatch => {
+    const d = new Date();
+    
+    const newComment = { // this is a single comment object we are passing into an array
+        campsiteId,
+        rating,
+        author,
+        text,
+        date: d.toISOString()
+    };
+    setTimeout(() => {
+        dispatch(addComment(newComment)); 
+    }, 2000);
+}
+
+export const addComment = comment => ({
+    type: ActionTypes.ADD_COMMENT,
+    payload: comment
 })

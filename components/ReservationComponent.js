@@ -4,6 +4,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 class Reservation extends Component {
 
+    // only class components can have state
+
     constructor(props) {
         super(props);
 

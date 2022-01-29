@@ -19,6 +19,7 @@ import SafeAreaView from 'react-native-safe-area-view';
 import { connect } from 'react-redux';
 import { fetchCampsites, fetchComments, fetchPartners, fetchPromotions } from '../redux/ActionCreators';
 
+// dispatch is for functions, state is for data
 // using mapDispatchToProps allows us to access these action creators as props
 const mapDispatchToProps = { // these action creators have all been thunked so they can handle async calls
     fetchCampsites,
@@ -278,7 +279,10 @@ const AppNavigator = createAppContainer(MainNavigator);
 
 class Main extends Component {
 
-    componentDidMount() { // we want to call our action creators AFTER the component has been created, so we'll use the componentDidMount life cycle method here to accomplish that.
+    // only class components can store state
+    // anything OUTSIDE of your component is state, otherwise it's props
+
+    componentDidMount() { // we want to call our action creators AFTER the component has been created, so we'll use the componentDidMount life cycle method here to accomplish that. we're outside of redux at this point. hooks in React mimic this activity too.
         this.props.fetchCampsites();
         this.props.fetchComments();
         this.props.fetchPromotions();
@@ -346,4 +350,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connect(null, mapDispatchToProps)(Main); // null first because we don't have state to props to be mapped.
+export default connect(null, mapDispatchToProps)(Main); // null first because we don't have state to props to be mapped, which connect expects as the first property
