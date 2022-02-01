@@ -111,7 +111,11 @@ class CampsiteInfo extends Component {
 
     handleComment(campsiteId) {
         //console.log(JSON.stringify(this.state)); // this logs the user input
-        postComment(campsiteId, this.state.rating, this.state.author, this.state.text)
+// FIX 1: So close! You are not calling postComment correctly. Firstly, since we are inside a class component, ebery defined method can only be called when preceded with the "this" keyword.
+// Secondly, you took the time on line 18 to map the imported postComment method to props. This means that postComment is only accessible through the props argument.
+// OLD CODE: postComment(campsiteId, this.state.rating, this.state.author, this.state.text)
+        this.props.postComment(campsiteId, this.state.rating, this.state.author, this.state.text);
+// END FIX 1
         this.toggleModal(); // we're still logging to the console for debugging, but notice we're also opening the modal now too.       
     }
 
