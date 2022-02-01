@@ -154,7 +154,12 @@ export const postFavorite = campsiteId => dispatch => { // here we're passing th
 export const addFavorite = campsiteId => ({ // non-thunked, simply returning an action object
     type: ActionTypes.ADD_FAVORITE,
     payload: campsiteId
-})
+});
+
+export const deleteFavorite = campsiteId => ({
+    type: ActionTypes.DELETE_FAVORITE,
+    payload: campsiteId
+});
 
 export const postComment = (campsiteId, rating, author, text) => dispatch => {
     const d = new Date();
@@ -169,9 +174,9 @@ export const postComment = (campsiteId, rating, author, text) => dispatch => {
     setTimeout(() => {
         dispatch(addComment(newComment)); 
     }, 2000);
-}
+};
 
 export const addComment = comment => ({
     type: ActionTypes.ADD_COMMENT,
     payload: comment
-})
+});

@@ -9,6 +9,9 @@ export const favorites = (state = [], /* initialize the state of favorites to an
             }
             return state.concat(action.payload); // id not already present? now then we will return a new state with the campsite id concatenated to the end of it. this adds a new item to the array without mutating the previous array.
 
+        case ActionTypes.DELETE_FAVORITE: // first time we're going to try to REMOVE something from state. hmmm... the favorites state is an array of campsite ids, then the DELETE_FAVORITE payload has the id of the campsite we want to delete from the array.
+            return state.filter(favorite => favorite !== action.payload); // filter every favorite where the campsite id DOES NOT match the id in the payload. this effectively creates a new array minus the favorite we wanted to delete, and returns it as the new state.
+
         default:
             return state; // default just returns the previous state.
         }
