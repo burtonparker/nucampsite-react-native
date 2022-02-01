@@ -6,6 +6,7 @@ import About from './AboutComponent';
 import Contact from './ContactComponent';
 import Constants from 'expo-constants';
 import Reservation from './ReservationComponent';
+import Favorites from './FavoritesComponent';
 import { View, Platform, StyleSheet, Text, ScrollView, Image } from 'react-native'; // Platform for conditional code adjustments
 // the Main component is a central hub and will hold all of our navigators.
 import { createStackNavigator } from 'react-navigation-stack'; // one required argument, RouteConfigs object
@@ -167,6 +168,33 @@ const ReservationNavigator = createStackNavigator(
     }
 );
 
+// stack navigator for the Favorites component, doesn't matter where this goes in the code really since drawerNavigator actually controls the order.
+
+const FavoritesNavigator = createStackNavigator(
+    {
+        Favorites: { screen: Favorites }
+    },
+    // note: this second argument is optional
+    {
+        // initialRoute is not needed since we only have one screen to deal with
+        defaultNavigationOptions: ({navigation}) => ({ // since we only have one screen here we can just use defaultNavigationOptions and not have to do the other navigationOptions fiddling we did with Directory above. that being said, we DO have do destructure navigation into here though.
+            headerStyle: {
+                backgroundColor: '#5637DD'
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+                color: '#fff'
+            },
+            headerLeft: <Icon
+                name='heart'
+                type='font-awesome'
+                iconStyle={styles.stackIcon}
+                onPress={() => navigation.toggleDrawer()}
+            />
+        })
+    }
+);
+
 const CustomDrawerContentComponent = props => ( // recieves props as it's parameter and will return the view of our customized drawer
     <ScrollView>
         <SafeAreaView /* specific to iPhone X and up, accounts for rounded corners, notch. default drawer navigator layout handles this but because we're replacing this with our own custom drawer we have to add SafeAreaView */ 
@@ -226,6 +254,20 @@ const MainNavigator = createDrawerNavigator(
                 drawerIcon: ({tintColor}) => (
                     <Icon
                         name='tree'
+                        type='font-awesome'
+                        size={24}
+                        color={tintColor} 
+                    />
+                ) 
+            }
+        },
+        Favorites: { 
+            screen: FavoritesNavigator,
+            navigationOptions: { 
+                drawerLabel: 'My Favorites',
+                drawerIcon: ({tintColor}) => (
+                    <Icon
+                        name='heart'
                         type='font-awesome'
                         size={24}
                         color={tintColor} 
