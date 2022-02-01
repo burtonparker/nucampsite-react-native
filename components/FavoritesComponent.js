@@ -1,5 +1,5 @@
 import React, { Component } from 'react'; // Component because we're going to make a class component
-import { FlatList, View, Text, StyleSheet } from 'react-native';
+import { FlatList, View, Text, StyleSheet, Alert } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import { connect } from 'react-redux'; // connect to the store to get that sweet sweet data
 import { Loading } from './LoadingComponent'; // show while we load
@@ -33,7 +33,26 @@ class Favorites extends Component {
                     <View style={styles.deleteView} /* this View holds the content we show AFTER the swipe */ >
                         <TouchableOpacity
                             style={styles.deleteTouchable}
-                            onPress={() => this.props.deleteFavorite(item.id)} // fire off deleteFavorite 
+                            onPress={() => 
+                                Alert.alert( // this method takes several parameters
+                                    'Delete Favorite?', // this is the title displayed in the alert dialog.
+                                    'Are you sure you wish to delete the favorite campsite ' + 
+                                        item.name + 
+                                        '?', // short message shown in the dialog box.
+                                    [
+                                        {
+                                            text: 'Cancel',
+                                            onPress: () => console.log(item.name + ' Not Deleted'),
+                                            style: 'cancel'
+                                        },
+                                        {
+                                            text: 'OK',
+                                            onPress: () => this.props.deleteFavorite(item.id) // fire off deleteFavorite, also check previous commit for the original, non-alert version of this execution.
+                                        },
+                                    ], // set of actions the alert dialog needs to support, provided as an array of objects. each object here will represent a button in the alert dialog.
+                                    { cancelable: false } // by default on Android alerts can be dismissed by tapping outside of the alert box, this disables that.
+                                )
+                            }
                         >
                             <Text style={styles.deleteText}>Delete</Text>
                         </TouchableOpacity>
