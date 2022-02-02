@@ -20,6 +20,7 @@ import { createDrawerNavigator } from 'react-navigation-drawer';
 */
 import { connect } from 'react-redux'; // how we get the data from the redux store
 import { baseUrl } from '../shared/baseUrl';
+import * as Animatable from 'react-native-animatable';
 
 // you have to pass mapStateToProps to connect in order for this to work
 const mapStateToProps = state => { // mapStateToProps lets us pick and choose certain parts of the store so we don't have to load ALL of it
@@ -73,25 +74,29 @@ class About extends Component {
         if (this.props.partners.errMess) {
             return (
                 <ScrollView>
-                <Mission />
-                    <Card 
-                        title="Community Partners">
-                            <Text>{this.props.partners.errMess}</Text>
-                    </Card>
+                <Animatable.View animation='fadeInDown' duration={2000} delay={1000}>
+                    <Mission />
+                        <Card 
+                            title="Community Partners">
+                                <Text>{this.props.partners.errMess}</Text>
+                        </Card>
+                </Animatable.View>
                 </ScrollView> 
             );
         }
         return (
             <ScrollView>
-                <Mission />
-                <Card 
-                    title="Community Partners">
-                        <FlatList 
-                            data={this.props.partners.partners} // the first partners refers to the entire part of the state that handles the partners data, including isLoading and error message properties, along with the partners array. the second partners, is what actually refers to the partners data array.
-                            renderItem={renderPartner}
-                            keyExtractor={item => item.id.toString()}
-                        />
-                    </Card>
+                <Animatable.View animation='fadeInDown' duration={2000} delay={1000}>
+                    <Mission />
+                        <Card 
+                            title="Community Partners">
+                                <FlatList 
+                                    data={this.props.partners.partners} // the first partners refers to the entire part of the state that handles the partners data, including isLoading and error message properties, along with the partners array. the second partners, is what actually refers to the partners data array.
+                                    renderItem={renderPartner}
+                                    keyExtractor={item => item.id.toString()}
+                                />
+                        </Card>
+                </Animatable.View>
             </ScrollView>
         );
     }

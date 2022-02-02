@@ -4,6 +4,7 @@ import { Tile } from 'react-native-elements';
 import { connect } from 'react-redux'; // how we get the data from the redux store
 import { baseUrl } from '../shared/baseUrl';
 import Loading from './LoadingComponent';
+import * as Animatable from 'react-native-animatable';
 
 // you have to pass mapStateToProps to connect in order for this to work
 const mapStateToProps = state => { // mapStateToProps lets us pick and choose certain parts of the store so we don't have to load ALL of it
@@ -32,15 +33,17 @@ class Directory extends Component {
         const { navigate } = this.props.navigation; // each screen component is provided with the navigation prop automatically
         const renderDirectoryItem = ({item}) => {
             return (
-                <Tile
-                    title={item.name}
-                    caption={item.description}
-                    featured
-                    onPress={() => navigate('CampsiteInfo', { campsiteId: item.id })} // two arguments: first, the name of the screen to navigate to (CampsiteInfo), second optional adds extra parameters to the route, in this case the campsite id that was pressed. this will be passed to CampsiteInfo component via campsiteId.
-                    imageSrc={{uri: baseUrl + item.image}}
-                    // onPress={() => props.onPress(item.id)} // when the ListItem component is pressed on a mobile device, whatever function we put in here will fire. we're going to trigger our onCampsiteSelect event handler. don't forget, we named our other prop "onPress" as well, so that's what's being called here. this is going to update the selectedCampsite property in Main.
-                    // leftAvatar={{ source: require('./images/react-lake.jpg')}} // requires an object, so we need to use two sets of curly braces: the first set to embed the JavaScript inside of JSX, the second set to define the object literal. leftAvatar takes a property of source, and a property value is a function called "require" provided by Node.js. we will give it the location of an image we want to use. normally this would be a different image for each item but for our purposes it's the same thing.
-                />
+                <Animatable.View animation='fadeInRightBig' duration={2000}>
+                    <Tile
+                        title={item.name}
+                        caption={item.description}
+                        featured
+                        onPress={() => navigate('CampsiteInfo', { campsiteId: item.id })} // two arguments: first, the name of the screen to navigate to (CampsiteInfo), second optional adds extra parameters to the route, in this case the campsite id that was pressed. this will be passed to CampsiteInfo component via campsiteId.
+                        imageSrc={{uri: baseUrl + item.image}}
+                        // onPress={() => props.onPress(item.id)} // when the ListItem component is pressed on a mobile device, whatever function we put in here will fire. we're going to trigger our onCampsiteSelect event handler. don't forget, we named our other prop "onPress" as well, so that's what's being called here. this is going to update the selectedCampsite property in Main.
+                        // leftAvatar={{ source: require('./images/react-lake.jpg')}} // requires an object, so we need to use two sets of curly braces: the first set to embed the JavaScript inside of JSX, the second set to define the object literal. leftAvatar takes a property of source, and a property value is a function called "require" provided by Node.js. we will give it the location of an image we want to use. normally this would be a different image for each item but for our purposes it's the same thing.
+                    />
+                </Animatable.View>
             );
         };
 

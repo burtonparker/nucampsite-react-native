@@ -4,6 +4,7 @@ import { Card, Icon, Rating, Input } from 'react-native-elements';
 import { connect } from 'react-redux'; // how we get the data from the redux store
 import { baseUrl } from '../shared/baseUrl';
 import { postFavorite, postComment } from '../redux/ActionCreators'; // to store data first we need to import our action creator
+import * as Animatable from 'react-native-animatable';
 
 // you have to pass mapStateToProps to connect in order for this to work
 const mapStateToProps = state => { // mapStateToProps lets us pick and choose certain parts of the store so we don't have to load ALL of it
@@ -26,39 +27,41 @@ function RenderCampsite(props) { // UPDATE: for Week 2, Lesson 1 - we are now pa
 
     if (campsite) { // make sure campsite isn't null or undefined
         return (
-            <Card
-                featuredTitle={campsite.name}
-                image={{uri: baseUrl + campsite.image}}>
-                <Text style={{margin:10}} /* double curly braces again, this is an object */>
-                    {campsite.description}
-                </Text>
-                <View style={styles.cardRow}>
-                <Icon // what we can use here: https://react-native-elements.github.io/react-native-elements/docs/2.3.2/icon
-                    name={props.favorite ? 'heart' : 'heart-o'} // ternary operator here, if favorite is true, display the solid heart icon, if it's false, display the open heart icon.
-                    type='font-awesome'
-                    color='#f50'
-                    raised // adds a subtle shadow effect
-                    reverse // reverses the color scheme
-                    onPress={() => props.favorite ? 
-                        console.log('Already set as a favorite') : 
-                        props.markFavorite()
-                    } // so what's happening here is we are checking if favorite is already set to true and if so we're logging a message to the terminal. if it's false, we let them set the favorite. broken across several lines to make it easier to follow what's happening here in the ternary.
+            <Animatable.View animation='fadeInDown' duration={2000} delay={1000}>
+                <Card
+                    featuredTitle={campsite.name}
+                    image={{uri: baseUrl + campsite.image}}>
+                    <Text style={{margin:10}} /* double curly braces again, this is an object */>
+                        {campsite.description}
+                    </Text>
+                    <View style={styles.cardRow}>
+                    <Icon // what we can use here: https://react-native-elements.github.io/react-native-elements/docs/2.3.2/icon
+                        name={props.favorite ? 'heart' : 'heart-o'} // ternary operator here, if favorite is true, display the solid heart icon, if it's false, display the open heart icon.
+                        type='font-awesome'
+                        color='#f50'
+                        raised // adds a subtle shadow effect
+                        reverse // reverses the color scheme
+                        onPress={() => props.favorite ? 
+                            console.log('Already set as a favorite') : 
+                            props.markFavorite()
+                        } // so what's happening here is we are checking if favorite is already set to true and if so we're logging a message to the terminal. if it's false, we let them set the favorite. broken across several lines to make it easier to follow what's happening here in the ternary.
 
-                    // this version below will simply mark is as a favorite but contains no if/then logic to handle a case where we already marked it as a favorite, saving it below for future reference of why the ternary is so helpful in cases like this
-                    // onPress={() => props.markFavorite()}
-                    // just a dumb alert example for myself
-                    // onPress={() => alert('blah blah blah')}
-                />
-                <Icon
-                    name='pencil'
-                    type='font-awesome'
-                    color='#5637dd'
-                    raised
-                    reverse
-                    onPress={() => props.onShowModal()}
-                />
-                </View>
-            </Card>
+                        // this version below will simply mark is as a favorite but contains no if/then logic to handle a case where we already marked it as a favorite, saving it below for future reference of why the ternary is so helpful in cases like this
+                        // onPress={() => props.markFavorite()}
+                        // just a dumb alert example for myself
+                        // onPress={() => alert('blah blah blah')}
+                    />
+                    <Icon
+                        name='pencil'
+                        type='font-awesome'
+                        color='#5637dd'
+                        raised
+                        reverse
+                        onPress={() => props.onShowModal()}
+                    />
+                    </View>
+                </Card>
+            </Animatable.View>
         );
     }
     return <View />; // reminder: we ALWAYS need to return something from a component, this is just in case we hit a falsy
@@ -82,13 +85,15 @@ function RenderComments({comments}) { //desctructure the comments array,  it get
     }; // use an arrow function here, this automatically gets an "item" prop so we can destructure that out
 
     return ( // we know the comments are in an array, so we're going to use FlatList, which EXPECTS it's data in the form of an array - IMPORTANT
-        <Card title='Comments'>
-            <FlatList
-                data={comments} // give it the comments array as it's data prop
-                renderItem={renderCommentItem} // gonna pass a new function here to render individual comments
-                keyExtractor={item => item.id.toString()} // all the comments have a unique id so we'll pass that to keyExtractor
-            />
-        </Card>
+        <Animatable.View animation='fadeInUp' duration={2000} delay={1000}>
+            <Card title='Comments'>
+                <FlatList
+                    data={comments} // give it the comments array as it's data prop
+                    renderItem={renderCommentItem} // gonna pass a new function here to render individual comments
+                    keyExtractor={item => item.id.toString()} // all the comments have a unique id so we'll pass that to keyExtractor
+                />
+            </Card>
+        </Animatable.View>
     );
 }
 
