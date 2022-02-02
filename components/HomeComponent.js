@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, Animated } from 'react-native';
 import { Card } from 'react-native-elements';
 import { connect } from 'react-redux'; // how we get the data from the redux store
 import { baseUrl } from '../shared/baseUrl';
@@ -43,7 +43,29 @@ function RenderItem(props) { // gonna pass this an item we destructure from the 
 
 class Home extends Component {
 
-// RIP constructor
+    constructor(props) { // we need to store the Animated value in the local component state.
+        super(props);
+        this.state = {
+            scaleValue: new Animated.Value(0) // note: doesn't need to be named 'scaleValue', can be called anything, we are just naming it after what it controls so it's easier to understand wtf is happening here.
+        };
+    }
+
+    animate() { // same thing here with the name 'animate', it could be any word used for this method, just choosing this one since it's descriptive.
+        Animated.timing( // gonna give two arguments here...
+            this.state.scaleValue, // the animated value that we want to have change over time.
+            { // the second argument is an entire object containing 3 properties
+                toValue: 1, // what we want the value to change to, from it's initial value, 0 to 1, aka 100% in terms of scale.
+                duration: 1500, // how long does it take to animate from 0 to 1
+                useNativeDriver: true // helps improve the perfomance of animations in this library.
+            }
+
+        ).start(); // super important - we're chaining a method called 'start' here which starts the animation for us. Animated.timing also has a 'stop' method we could use but we don't need it here.
+
+    }
+
+    componentDidMount() { // to start the animation and run it just once, we're going to call the animate method from the lifecycle method componentDidMount. when the Home component mounts, it will automatically start this animation.
+        this.animate();
+    }
 
     static navigationOptions = {
         title: 'Home'
@@ -53,7 +75,7 @@ class Home extends Component {
 
     render() {
         return (
-            <ScrollView>
+            <Animated.ScrollView style={{transform: [{scale: this.state.scaleValue}]}}>
                 <RenderItem
                     item={this.props.campsites.campsites.filter(campsite => campsite.featured)[0]}
                     isLoading={this.props.campsites.isLoading}
@@ -69,7 +91,7 @@ class Home extends Component {
                     isLoading={this.props.partners.isLoading}
                     errMess={this.props.partners.errMess}
                 />
-            </ScrollView>
+            </Animated.ScrollView>
         );
     }
 }
