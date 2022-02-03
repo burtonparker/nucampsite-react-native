@@ -1,5 +1,5 @@
 import React, { Component } from 'react'; // reminder, we need component when we need to deal with state data
-import { View, Text, ScrollView, FlatList, Modal, Button, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, FlatList, Modal, Button, StyleSheet, Alert, PanResponder } from 'react-native';
 import { Card, Icon, Rating, Input } from 'react-native-elements';
 import { connect } from 'react-redux'; // how we get the data from the redux store
 import { baseUrl } from '../shared/baseUrl';
@@ -25,9 +25,43 @@ function RenderCampsite(props) { // UPDATE: for Week 2, Lesson 1 - we are now pa
 
     const {campsite} = props; // we can still destructure just campsite within the function after the above change, like so.
 
+    const recognizeDrag = ({dx}) => (dx < -200) ? true : false; // dx is the differential across the x axis, negative numbers so smaller is bigger and vice versa
+
+    const panResponder = PanResponder.create({ // note that panResponder and PanResponder aren't the same thing. gonna pass an object here using predefined pan handlers.
+        onStartShouldSetPanResponder: () => true, // activates the PanResponder to respond to gestures to the component that it's used on.
+        onPanResponderEnd: (e, gestureState) => { // e stands for event, values that are automatically passed into this event handler.
+            console.log('pan responder end', gestureState);
+            if (recognizeDrag(gestureState)) { // true if more than 200 pixels to the left
+                Alert.alert(
+                    'Add Favorite',
+                    'Are you sure you wish to add ' + campsite.name + ' to favorite?',
+                    [
+                        {
+                            text: 'Cancel',
+                            style: 'cancel',
+                            onPress: () => console.log('Cancel Pressed')
+                        },
+                        {
+                            text: 'OK',
+                            onPress: () => props.favorite ? 
+                                console.log('Already set as a favorite') : props.markFavorite()
+                        }
+                    ],
+                    { cancelable: false }
+                );
+            }
+            return true;
+        }
+
+    });
+
     if (campsite) { // make sure campsite isn't null or undefined
         return (
-            <Animatable.View animation='fadeInDown' duration={2000} delay={1000}>
+            <Animatable.View 
+                animation='fadeInDown' 
+                duration={2000} 
+                delay={1000}
+                {...panResponder.panHandlers}>
                 <Card
                     featuredTitle={campsite.name}
                     image={{uri: baseUrl + campsite.image}}>
