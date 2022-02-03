@@ -25,10 +25,16 @@ function RenderCampsite(props) { // UPDATE: for Week 2, Lesson 1 - we are now pa
 
     const {campsite} = props; // we can still destructure just campsite within the function after the above change, like so.
 
+    const view = React.createRef(); // Refs are similar to using id elements in HTML and JavaScript, like getElementById. here we're creating a Ref and storing it in a variable called view
+
     const recognizeDrag = ({dx}) => (dx < -200) ? true : false; // dx is the differential across the x axis, negative numbers so smaller is bigger and vice versa
 
     const panResponder = PanResponder.create({ // note that panResponder and PanResponder aren't the same thing. gonna pass an object here using predefined pan handlers.
         onStartShouldSetPanResponder: () => true, // activates the PanResponder to respond to gestures to the component that it's used on.
+        onPanResponderGrant: () => { // triggered when a gesture is FIRST recognized.
+            view.current.rubberBand(1000)
+            .then(endState => console.log(endState.finished ? 'finished' : 'canceled')); // go to 2:39 of the video on this page for a super useful explanation of what all is happening here with view, current, and how we are using the rubberBand promise to trigger a console log after it's completion. could be incredibly useful for future reference: https://learn.nucamp.co/mod/book/view.php?id=3428&chapterid=3939
+        },
         onPanResponderEnd: (e, gestureState) => { // e stands for event, values that are automatically passed into this event handler.
             console.log('pan responder end', gestureState);
             if (recognizeDrag(gestureState)) { // true if more than 200 pixels to the left
@@ -61,6 +67,7 @@ function RenderCampsite(props) { // UPDATE: for Week 2, Lesson 1 - we are now pa
                 animation='fadeInDown' 
                 duration={2000} 
                 delay={1000}
+                ref={view} // any React components, that are defined as class components, will allow us to set a ref prop on it
                 {...panResponder.panHandlers}>
                 <Card
                     featuredTitle={campsite.name}
