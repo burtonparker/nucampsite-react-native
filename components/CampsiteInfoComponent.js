@@ -21,13 +21,15 @@ const mapDispatchToProps = {
     postComment: (campsiteId, rating, author, text) => (postComment(campsiteId, rating, author, text))
 };
 
-function RenderCampsite(props) { // UPDATE: for Week 2, Lesson 1 - we are now passing more than just campsite data so we need the entire props object in here. specifically this is being done because of our favorite/markFavorite user input. Previous notes from Week 1 lessons... from props we are only going to use the properties of the campsite object, so we can destructure that in the parameter list.
+function RenderCampsite(props) { // UPDATE: for Week 2, Lesson 1 - we are now passing more than just campsite data so we need the entire props object in here. specifically this is being done because of our favorite/markFavorite user input. Previous notes from Week 1 lessons... from props we are only going to use the properties of the campsite object, so we can destructure that in the parameter list. ALL functional components get props.
 
     const {campsite} = props; // we can still destructure just campsite within the function after the above change, like so.
 
     const view = React.createRef(); // Refs are similar to using id elements in HTML and JavaScript, like getElementById. here we're creating a Ref and storing it in a variable called view
 
     const recognizeDrag = ({dx}) => (dx < -200) ? true : false; // dx is the differential across the x axis, negative numbers so smaller is bigger and vice versa
+
+    const recognizeComment = ({dx}) => (dx > 200) ? true : false;
 
     const panResponder = PanResponder.create({ // note that panResponder and PanResponder aren't the same thing. gonna pass an object here using predefined pan handlers.
         onStartShouldSetPanResponder: () => true, // activates the PanResponder to respond to gestures to the component that it's used on.
@@ -55,6 +57,8 @@ function RenderCampsite(props) { // UPDATE: for Week 2, Lesson 1 - we are now pa
                     ],
                     { cancelable: false }
                 );
+            } else if (recognizeComment(gestureState)) {
+                props.onShowModal();
             }
             return true;
         }
@@ -67,7 +71,7 @@ function RenderCampsite(props) { // UPDATE: for Week 2, Lesson 1 - we are now pa
                 animation='fadeInDown' 
                 duration={2000} 
                 delay={1000}
-                ref={view} // any React components, that are defined as class components, will allow us to set a ref prop on it
+                ref={view} // any React components, that are defined as class components, will allow us to set a ref prop on it, imperitive usage
                 {...panResponder.panHandlers}>
                 <Card
                     featuredTitle={campsite.name}

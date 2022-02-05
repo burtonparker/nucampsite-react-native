@@ -63,7 +63,7 @@ class Home extends Component {
 
     }
 
-    componentDidMount() { // to start the animation and run it just once, we're going to call the animate method from the lifecycle method componentDidMount. when the Home component mounts, it will automatically start this animation.
+    componentDidMount() { // to start the animation and run it just once, we're going to call the animate method from the lifecycle method componentDidMount. when the Home component mounts, it will automatically start this animation. note: lifecycle methods ONLY work in class components.
         this.animate();
     }
 

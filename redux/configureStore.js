@@ -11,7 +11,7 @@ import storage from 'redux-persist/es/storage'; // updates the state to local st
 
 const config = { // first two properties are required here
     key: 'root',
-    storage, // this is local storage but could be many different types of storage
+    storage, // this is local storage but could be many different types of storage. also note: storage, is shorthand for storage: storage,
     debug: true
 }
 
