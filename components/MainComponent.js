@@ -7,6 +7,7 @@ import Contact from './ContactComponent';
 import Constants from 'expo-constants';
 import Reservation from './ReservationComponent';
 import Favorites from './FavoritesComponent';
+import Login from './LoginComponent';
 import { View, Platform, StyleSheet, Text, ScrollView, Image } from 'react-native'; // Platform for conditional code adjustments
 // the Main component is a central hub and will hold all of our navigators.
 import { createStackNavigator } from 'react-navigation-stack'; // one required argument, RouteConfigs object
@@ -195,6 +196,31 @@ const FavoritesNavigator = createStackNavigator(
     }
 );
 
+const LoginNavigator = createStackNavigator(
+    {
+        Login: { screen: Login }
+    },
+    // note: this second argument is optional
+    {
+        // initialRoute is not needed since we only have one screen to deal with
+        defaultNavigationOptions: ({navigation}) => ({ // since we only have one screen here we can just use defaultNavigationOptions and not have to do the other navigationOptions fiddling we did with Directory above. that being said, we DO have do destructure navigation into here though.
+            headerStyle: {
+                backgroundColor: '#5637DD'
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+                color: '#fff'
+            },
+            headerLeft: <Icon
+                name='sign-in'
+                type='font-awesome'
+                iconStyle={styles.stackIcon}
+                onPress={() => navigation.toggleDrawer()}
+            />
+        })
+    }
+);
+
 const CustomDrawerContentComponent = props => ( // recieves props as it's parameter and will return the view of our customized drawer
     <ScrollView>
         <SafeAreaView /* specific to iPhone X and up, accounts for rounded corners, notch. default drawer navigator layout handles this but because we're replacing this with our own custom drawer we have to add SafeAreaView */ 
@@ -221,6 +247,19 @@ const CustomDrawerContentComponent = props => ( // recieves props as it's parame
 
 const MainNavigator = createDrawerNavigator(
     {
+        Login: { 
+            screen: LoginNavigator,
+            navigationOptions: { // set these up as objects please
+                drawerIcon: ({tintColor}) => (
+                    <Icon
+                        name='sign-in'
+                        type='font-awesome'
+                        size={24}
+                        color={tintColor} // colors here will change based on active/inactive, and yes we can change the colors if we look up the documentation
+                    />
+                ) // drawerIcon prop, needs a function, tintColor is a default
+            }
+        },
         Home: { 
             screen: HomeNavigator,
             navigationOptions: { // set these up as objects please
@@ -306,6 +345,7 @@ const MainNavigator = createDrawerNavigator(
     },
     // as always, this second argument is optional but the first is required
     {
+        initialRouteName: 'Home', // what do we want our first screen on load to be?
         drawerBackgroundColor: '#cec8ff',
         contentComponent: CustomDrawerContentComponent // connecting our component to the DrawerNavigator, this tells it to use our custom drawer component to render the content of the side drawer, nice!
     }
