@@ -32,13 +32,31 @@ class Reservation extends Component {
                     {
                         text: 'Cancel',
                         style: 'cancel',
+                        // FIX 1.1: You can only have a single onPress property. To execute multiple commands, group them inside curly braces...
+                        // OLD CODE:
+                        /*
                         onPress: () => this.resetForm(),
                         onPress: () => console.log('Reservation Canceled')
+                        */
+                        onPress: () => {
+                            this.resetForm();
+                            console.log('Reservation Canceled');
+                        }
+                        // END FIX 1.1
                     },
                     {
                         text: 'OK',
+                        // FIX 1.2: You can only have a single onPress property. To execute multiple commands, group them inside curly braces...
+                        // OLD CODE:
+                        /*
                         onPress: () => this.resetForm(),
                         onPress: () => console.log('Reservation Confirmed')
+                        */
+                        onPress: () => {
+                            this.resetForm();
+                            console.log('Reservation Confirmed');
+                        }
+                        // END FIX 1.2
                     }
                 ],
                 { cancelable: false }
