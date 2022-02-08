@@ -1,5 +1,5 @@
 import React, { Component } from 'react'; // reminder, we need component when we need to deal with state data
-import { View, Text, ScrollView, FlatList, Modal, Button, StyleSheet, Alert, PanResponder } from 'react-native';
+import { View, Text, ScrollView, FlatList, Modal, Button, StyleSheet, Alert, PanResponder, Share } from 'react-native';
 import { Card, Icon, Rating, Input } from 'react-native-elements';
 import { connect } from 'react-redux'; // how we get the data from the redux store
 import { baseUrl } from '../shared/baseUrl';
@@ -65,6 +65,16 @@ function RenderCampsite(props) { // UPDATE: for Week 2, Lesson 1 - we are now pa
 
     });
 
+    const shareCampsite = (title, message, url) => {
+        Share.share({
+            title,
+            message: `${title}: ${message} ${url}`,
+            url
+        }, {
+            dialogTitle: 'Share ' + title // note this is Android only
+        });
+    };
+
     if (campsite) { // make sure campsite isn't null or undefined
         return (
             <Animatable.View 
@@ -103,6 +113,14 @@ function RenderCampsite(props) { // UPDATE: for Week 2, Lesson 1 - we are now pa
                         raised
                         reverse
                         onPress={() => props.onShowModal()}
+                    />
+                    <Icon
+                        name={'share'}
+                        type='font-awesome'
+                        color='#5637dd'
+                        raised
+                        reverse
+                        onPress={() => shareCampsite(campsite.name, campsite.description, baseUrl + campsite.image)}
                     />
                     </View>
                 </Card>
