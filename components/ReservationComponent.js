@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Text, View, ScrollView, StyleSheet, Picker, Switch, Button, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Animatable from 'react-native-animatable';
+import * as Notifications from 'expo-notifications';
 
 class Reservation extends Component {
 
@@ -53,6 +54,7 @@ class Reservation extends Component {
                         onPress: () => console.log('Reservation Confirmed')
                         */
                         onPress: () => {
+                            this.presentLocalNotification(this.state.date.toLocaleDateString('en-US'));
                             this.resetForm();
                             console.log('Reservation Confirmed');
                         }
@@ -70,6 +72,32 @@ class Reservation extends Component {
             date: new Date(),
             showCalendar: false
         });
+    }
+
+    // default behaviour here is for no notification to display so we need to override that.
+    async presentLocalNotification(date) {
+        function sendNotification() {
+            Notifications.setNotificationHandler({
+                handleNotification: async () => ({
+                    shouldShowAlert: true
+                })
+            });
+
+            Notifications.scheduleNotificationAsync({
+                content: {
+                    title: 'Your Campsite ReservationSearch',
+                    body: `Search for ${date} requested`
+                },
+                trigger: null // setting to null causes notification to fire immediately, could also be set to a time value, for example 30 seconds in the future, can be set to repeat, etc.
+            });
+        }
+        let permissions = await Notifications.getPermissionsAsync(); // head's up: await is an ES8 keyword that can ONLY be used inside an async function, followed by a promise.
+        if (!permissions.granted) { // if permissions are not initially granted, we want to make a specific request for permissions
+            permissions = await Notifications.requestPermissionsAsync();
+        }
+        if (permissions.granted) {
+            sendNotification();
+        }
     }
 
     render() {
