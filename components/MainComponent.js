@@ -8,8 +8,9 @@ import Constants from 'expo-constants';
 import Reservation from './ReservationComponent';
 import Favorites from './FavoritesComponent';
 import Login from './LoginComponent';
-import { View, Platform, StyleSheet, Text, ScrollView, Image } from 'react-native'; // Platform for conditional code adjustments
+import { View, Platform, StyleSheet, Text, ScrollView, Image, Alert, ToastAndroid } from 'react-native'; // Platform for conditional code adjustments
 // the Main component is a central hub and will hold all of our navigators.
+import NetInfo from '@react-native-community/netinfo';
 import { createStackNavigator } from 'react-navigation-stack'; // one required argument, RouteConfigs object
 import { createAppContainer } from 'react-navigation';
 import { createDrawerNavigator, DrawerItems } from 'react-navigation-drawer';
@@ -370,6 +371,19 @@ class Main extends Component {
         this.props.fetchPromotions();
         this.props.fetchPartners();
 
+        // note 'connectionInfo' can be called anything. in documentation they call it state, could be called hamburger too.
+        NetInfo.fetch().then(connectionInfo => {
+            (Platform.OS === 'ios')
+            ? Alert.alert('Initial Network Connectivity Type:', connectionInfo.type)
+            : ToastAndroid.show('Initial Network Connectivity Type: ' + 
+            connectionInfo.type, ToastAndroid.LONG);
+        });
+
+        // gotta use 'this' to specify this is a method on the parent class rather than as a local variable inside componentDidMount
+        this.unsubscribeNetInfo = NetInfo.addEventListener(connectionInfo => {
+            this.handleConnectivityChange(connectionInfo);
+        });
+
     }
 /*     constructor(props) {
         super(props);
@@ -386,6 +400,31 @@ class Main extends Component {
 /*     onCampsiteSelect(campsiteId) {
         this.setState({selectedCampsite: campsiteId});  // update the state, state is being managed by the React Native component. this is similar to how we handled state prior to introducing Redux.
     } */
+
+    componentWillUnmount() { // stop listening when the Main component unmounts.
+        this.unsubscribeNetInfo();
+    }
+
+    handleConnectivityChange = connectionInfo => { // see here for our cases: https://github.com/react-native-netinfo/react-native-netinfo#netinfostatetype
+        let connectionMsg = 'You are now connected to an active network.';
+        switch (connectionInfo.type) {
+            case 'none':
+                connectionMsg = 'No network connection is active.';
+                break;
+            case 'unknown':
+                connectionMsg = 'The network connection state is now unknown.';
+                break;
+            case 'cellular':
+                connectionMsg = 'You are now connected to a cellular network.';
+                break;
+            case 'wifi':
+                connectionMsg = 'You are now connected to a WiFi network.';
+                break;
+        }
+        (Platform.OS === 'ios')
+            ? Alert.alert('Connection change:', connectionMsg)
+            : ToastAndroid.show(connectionMsg, ToastAndroid.LONG);
+    }
 
     render() { // pass the entire campsites array. we can't return two components at the top level, only one. in this case we wrap them in a View component as a work around. NOTE: check commit history, this was removed after implementing AppNavigator but like above I'm trying to preserve the steps for reference for future projects/knowledge.
         return (
