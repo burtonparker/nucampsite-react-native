@@ -371,13 +371,15 @@ class Main extends Component {
         this.props.fetchPromotions();
         this.props.fetchPartners();
 
+        this.showNetInfo();
+
         // note 'connectionInfo' can be called anything. in documentation they call it state, could be called hamburger too.
-        NetInfo.fetch().then(connectionInfo => {
-            (Platform.OS === 'ios')
-            ? Alert.alert('Initial Network Connectivity Type:', connectionInfo.type)
-            : ToastAndroid.show('Initial Network Connectivity Type: ' + 
-            connectionInfo.type, ToastAndroid.LONG);
-        });
+        //NetInfo.fetch().then(connectionInfo => {
+        //   (Platform.OS === 'ios')
+        //    ? Alert.alert('Initial Network Connectivity Type:', connectionInfo.type)
+        //    : ToastAndroid.show('Initial Network Connectivity Type: ' + 
+        //    connectionInfo.type, ToastAndroid.LONG);
+        //});
 
         // gotta use 'this' to specify this is a method on the parent class rather than as a local variable inside componentDidMount
         this.unsubscribeNetInfo = NetInfo.addEventListener(connectionInfo => {
@@ -385,6 +387,15 @@ class Main extends Component {
         });
 
     }
+
+    showNetInfo = async () => {
+        const connectionInfo = await NetInfo.fetch();
+            (Platform.OS === 'ios')
+            ? Alert.alert('Initial Network Connectivity Type:', connectionInfo.type)
+            : ToastAndroid.show('Initial Network Connectivity Type: ' + 
+            connectionInfo.type, ToastAndroid.LONG);
+    }
+
 /*     constructor(props) {
         super(props);
         this.state = {
