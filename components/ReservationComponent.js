@@ -75,7 +75,7 @@ class Reservation extends Component {
     }
 
     // default behaviour here is for no notification to display so we need to override that.
-    async presentLocalNotification(date) {
+    async presentLocalNotification(date) { // date can be called anything
         function sendNotification() {
             Notifications.setNotificationHandler({
                 handleNotification: async () => ({
@@ -95,7 +95,7 @@ class Reservation extends Component {
         if (!permissions.granted) { // if permissions are not initially granted, we want to make a specific request for permissions
             permissions = await Notifications.requestPermissionsAsync();
         }
-        if (permissions.granted) {
+        if (permissions.granted) { // this is an if instead of an else because an else would be ignored and we'd never get a notification.
             sendNotification();
         }
     }
