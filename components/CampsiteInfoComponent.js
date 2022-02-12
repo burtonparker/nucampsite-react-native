@@ -68,7 +68,7 @@ function RenderCampsite(props) { // UPDATE: for Week 2, Lesson 1 - we are now pa
     const shareCampsite = (title, message, url) => {
         Share.share({
             title,
-            message: `${title}: ${message} ${url}`,
+            message: `${title}: ${message} ${url}`, // add a platform check here so it doesn't show the url twice on iOS, see Main component for reference, maybe ternary?
             url
         }, {
             dialogTitle: 'Share ' + title // note this is Android only
