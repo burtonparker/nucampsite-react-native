@@ -34,9 +34,12 @@ class LoginTab extends Component {
     handleLogin() { // event handler for login. userinfo here is the key, second, the value we want to store, but first we have to convert it to a JSON string.
         console.log(JSON.stringify(this.state));
         if (this.state.remember) {
-            SecureStore.setItemAsync('userinfo', JSON.stringify(
-                {username: this.state.username, password: this.state.password}))
-                .catch(error => console.log('Could not save user info', error));
+            SecureStore.setItemAsync(
+                'userinfo', 
+                JSON.stringify({
+                    username: this.state.username, 
+                    password: this.state.password})
+                    ).catch(error => console.log('Could not save user info', error));
         } else {
             SecureStore.deleteItemAsync('userinfo')
                 .catch(error => console.log('Could not delete user info, error'));
