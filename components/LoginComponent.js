@@ -158,7 +158,7 @@ class RegisterTab extends Component {
             });
             if (!capturedImage.cancelled) {
                 console.log(capturedImage);
-                this.setState({imageUrl: capturedImage.uri})
+                this.setState({imageUrl: capturedImage.uri});
             }
         }
     }
@@ -258,7 +258,7 @@ class RegisterTab extends Component {
     }
 }
 
-const Login = createBottomTabNavigator( // passing in two objects as arguments
+const Login = createBottomTabNavigator( // note what we're doing here - we still only want to have one export, so we can use createBottomTabNavigator to wrap the above two class components into a single export. passing in two objects as arguments, they'll render in this order.
     {
         Login: LoginTab,
         Register: RegisterTab
